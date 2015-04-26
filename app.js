@@ -1,5 +1,9 @@
 'use strict';
 
+var BOOLEAN = 'boolean',
+  NUMBER = 'number',
+  STRING = 'string';
+
 var Model = function () {};
 
 Model.prototype.init = function (config) {
@@ -45,13 +49,46 @@ Model.prototype.get = function (fieldName) {
 var Field = function (name, config, value) {
   this.name = name;
   this.type = config.type;
-  this.value = value;
+  this.default = config.default;
+
+  this.setInitialValue(value);
 };
 
 Field.prototype.get = function () {
   return this.value;
 };
 
+Field.prototype.setInitialValue = function (value) {
+  if (value === undefined) {
+    this.set(this.default);
+  } else {
+    this.set(value);
+    this.value = value;
+  }
+};
+
+Field.prototype.set = function (rawValue) {
+  this.rawValue = rawValue;
+  this.value = this.convertValue(rawValue);
+};
+
+Field.prototype.convertValue = function (rawValue) {
+  // TODO: convert based on type
+  console.log(this.type);
+  var value;
+  switch (this.type) {
+    case BOOLEAN:
+      value = !!rawValue;
+      break;
+    default:
+      value = rawValue;
+  }
+
+  return value;
+};
+
+// @param {Function} Parent
+// @return {Function}
 var extend = function (Parent) {
   function Constructor(config){
     if (typeof this.init === 'function') {
@@ -76,3 +113,6 @@ var define = function (name, modelConfig) {
 };
 
 exports.define = define;
+exports.BOOLEAN = BOOLEAN;
+exports.STRING = STRING;
+exports.NUMBER = NUMBER;

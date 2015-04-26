@@ -23,10 +23,14 @@ describe('instantiating a model', function () {
     Foo = app.define('Foo', {
       fields: {
         foo: {
-          type: 'boolean'
+          type: app.BOOLEAN
         },
         bar: {
-          type: 'string'
+          type: app.STRING
+        },
+        baz: {
+          type: app.STRING,
+          default: 'the default baz'
         }
       }
     });
@@ -48,5 +52,17 @@ describe('instantiating a model', function () {
     });
 
     will(foo.get('bar')).be(99);
+  });
+
+  it('should return default value for a field if not specified during instantiation', function () {
+    will(foo.get('baz')).be('the default baz');
+  });
+  
+  describe('converting field values', function () {
+    describe('type constants', function () {
+      it('should provide constants to use for field type', function () {
+        will(app).have(['BOOLEAN', 'STRING', 'NUMBER']);
+      });
+    });
   });
 });
