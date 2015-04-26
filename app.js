@@ -73,12 +73,16 @@ Field.prototype.set = function (rawValue) {
 };
 
 Field.prototype.convertValue = function (rawValue) {
-  // TODO: convert based on type
-  console.log(this.type);
   var value;
   switch (this.type) {
     case BOOLEAN:
       value = !!rawValue;
+      break;
+    case STRING:
+      value = '' + (rawValue || '');
+      break;
+    case NUMBER:
+      value = +(rawValue || 0);
       break;
     default:
       value = rawValue;

@@ -31,6 +31,9 @@ describe('instantiating a model', function () {
         baz: {
           type: app.STRING,
           default: 'the default baz'
+        },
+        quux: {
+          type: app.NUMBER
         }
       }
     });
@@ -63,6 +66,18 @@ describe('instantiating a model', function () {
       it('should provide constants to use for field type', function () {
         will(app).have(['BOOLEAN', 'STRING', 'NUMBER']);
       });
+    });
+
+    it('should convert STRING', function () {
+      will(foo.get('bar')).be('');
+    });
+
+    it('should convert BOOLEAN', function () {
+      will(foo.get('foo')).be(false);
+    });
+
+    it('should convert NUMBER', function () {
+      will(foo.get('quux')).be(0);
     });
   });
 });
