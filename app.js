@@ -1,25 +1,55 @@
 'use strict';
 
-var define = function (name, config) {
+var ModelConstructor = function (config) {
+  this.fields = this.createFields(config.fields);
+  // this.initValues(config);
+};
 
-  return function Constructor() {
-    this.fields = config.fields;
+// @param {Object} fieldConfigs
+// @return {Field[]}
+ModelConstructor.prototype.createFields = function (fieldConfigs) {
+  var fields = [];
 
-    this.get = function (field) {
-      var fieldValues = {},
-        value;
+    Object.keys(fieldConfigs || {}).forEach(function (config) {
+      fields.push(new Field(config));
+    });
 
-      if (!field) {
-        Object.keys(this.fields).forEach(function (key) {
-          fieldValues[key] = this.fields[key];
-        }, this);
-      } else {
-        value = this.fields[field];
+    return fields;
+};
+
+// get a field value
+// @param {String} [fieldName]
+// @return {*}
+ModelConstructor.prototype.get = function (fieldName) {
+  var allValues = {},
+    value;
+
+  if (!fieldName) {
+    this.fields.forEach(function (field) {
+      allValues[field.name] = field.get();
+    });
+  } else {
+    this.fields.every(function (field) {
+      if (field.name === fieldName) {
+        value = field.get();
       }
+      return field.name !== fieldName;
+    });
+  }
 
-      return field ? value : fieldValues;
-    };
-  };
+  return fieldName ? value : allValues;
+};
+
+var Field = function (config) {
+  this.type = config.type;
+};
+
+Field.prototype.get = function () {
+  return this.value;
+};
+
+var define = function (name, modelConfig) {
+  return new ModelConstructor(modelConfig || {});
 };
 
 exports.define = define;

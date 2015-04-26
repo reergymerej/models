@@ -19,8 +19,12 @@ describe('instantiating a model', function () {
   var foo,
     Foo = app.define('Foo', {
       fields: {
-        foo: true,
-        bar: true
+        foo: {
+          type: 'boolean'
+        },
+        bar: {
+          type: 'string'
+        }
       }
     });
 
