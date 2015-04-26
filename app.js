@@ -1,17 +1,19 @@
 'use strict';
 
-var ModelConstructor = function (config) {
-  this.fields = this.createFields(config.fields);
-  // this.initValues(config);
+var Model = function () {};
+
+Model.prototype.init = function (config) {
+  this.fields = this.createFields(this.constructor.prototype.config.fields, config);
 };
 
 // @param {Object} fieldConfigs
+// @param {Object} fieldValues
 // @return {Field[]}
-ModelConstructor.prototype.createFields = function (fieldConfigs) {
+Model.prototype.createFields = function (fieldConfigs, fieldValues) {
   var fields = [];
 
-    Object.keys(fieldConfigs || {}).forEach(function (config) {
-      fields.push(new Field(config));
+    Object.keys(fieldConfigs || {}).forEach(function (fieldName) {
+      fields.push(new Field(fieldName, fieldConfigs[fieldName], fieldValues[fieldName]));
     });
 
     return fields;
@@ -20,7 +22,7 @@ ModelConstructor.prototype.createFields = function (fieldConfigs) {
 // get a field value
 // @param {String} [fieldName]
 // @return {*}
-ModelConstructor.prototype.get = function (fieldName) {
+Model.prototype.get = function (fieldName) {
   var allValues = {},
     value;
 
@@ -40,16 +42,37 @@ ModelConstructor.prototype.get = function (fieldName) {
   return fieldName ? value : allValues;
 };
 
-var Field = function (config) {
+var Field = function (name, config, value) {
+  this.name = name;
   this.type = config.type;
+  this.value = value;
 };
 
 Field.prototype.get = function () {
   return this.value;
 };
 
+var extend = function (Parent) {
+  function Constructor(config){
+    if (typeof this.init === 'function') {
+      this.init(config || {});
+    }
+  }
+  Constructor.prototype = Parent.prototype;
+  return Constructor;
+};
+
+var createModelConstructor = function (name, config) {
+  var Constructor = extend(Model);
+
+  Constructor.prototype.type = name;
+  Constructor.prototype.config = config;
+
+  return Constructor;
+};
+
 var define = function (name, modelConfig) {
-  return new ModelConstructor(modelConfig || {});
+  return createModelConstructor(name, modelConfig);
 };
 
 exports.define = define;

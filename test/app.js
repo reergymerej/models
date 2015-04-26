@@ -10,13 +10,16 @@ describe('sanity', function () {
 });
 
 describe('defining a model', function () {
-  it('should allow a model to be defined', function () {
-    will(app.define('Foo')).exist();
+  it('should return a constructor', function () {
+    will(typeof app.define('Foo')).be('function');
   });
 });
 
 describe('instantiating a model', function () {
   var foo,
+      Foo;
+
+  before(function () {
     Foo = app.define('Foo', {
       fields: {
         foo: {
@@ -27,17 +30,16 @@ describe('instantiating a model', function () {
         }
       }
     });
-
-  before(function () {
     foo = new Foo();
   });
 
   it('should return an instance of the model', function () {
-    will(foo).exist();
+    will(foo).beA(Foo);
   });
 
   it('should have all fields set, even if they were not provided during instantiation', function () {
-    will(foo.get()).have(['foo', 'bar']);
+    var keys = Object.keys(foo.get());
+    will(keys).have(['foo', 'bar']);
   });
 
   it('should return the value for a given field', function () {
