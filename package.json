@@ -7,7 +7,7 @@
     "test": "test"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "./node_modules/.bin/mocha --reporter spec"
   },
   "keywords": [
     "mvc",
@@ -16,5 +16,9 @@
     "library"
   ],
   "author": "Jeremy Greer <jeremy.greer.atl@gmail.com> (http://jeremygreer.herokuapp.com/)",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "mocha": "^2.2.4",
+    "willy": "^1.0.1"
+  }
 }
