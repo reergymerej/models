@@ -1,0 +1,20 @@
+{
+  "name": "models",
+  "version": "1.0.0",
+  "description": "the M of MVC",
+  "main": "app.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "mvc",
+    "model",
+    "model",
+    "library"
+  ],
+  "author": "Jeremy Greer <jeremy.greer.atl@gmail.com> (http://jeremygreer.herokuapp.com/)",
+  "license": "ISC"
+}
