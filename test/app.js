@@ -34,6 +34,10 @@ describe('instantiating a model', function () {
         },
         quux: {
           type: app.NUMBER
+        },
+        numAsString: {
+          type: app.STRING,
+          default: '123'
         }
       }
     });
@@ -51,10 +55,10 @@ describe('instantiating a model', function () {
 
   it('should return the value for a given field', function () {
     var foo = new Foo({
-      bar: 99
+      bar: 'some string'
     });
 
-    will(foo.get('bar')).be(99);
+    will(foo.get('bar')).be('some string');
   });
 
   it('should return default value for a field if not specified during instantiation', function () {
@@ -78,6 +82,24 @@ describe('instantiating a model', function () {
 
     it('should convert NUMBER', function () {
       will(foo.get('quux')).be(0);
+    });
+
+    it('should convert default values according to type', function () {
+      will(foo.get('numAsString')).be('123');
+    });
+
+    it('should convert values according to type', function () {
+      var foo = new Foo({
+        numAsString: 666,
+      });
+      will(foo.get('numAsString')).be('666');
+    });
+
+    it('should handle NaN', function () {
+      var foo = new Foo({
+        quux: 'asdf',
+      });
+      will(foo.get('quux')).beA(Number);
     });
   });
 });

@@ -63,7 +63,6 @@ Field.prototype.setInitialValue = function (value) {
     this.set(this.default);
   } else {
     this.set(value);
-    this.value = value;
   }
 };
 
@@ -83,6 +82,9 @@ Field.prototype.convertValue = function (rawValue) {
       break;
     case NUMBER:
       value = +(rawValue || 0);
+      if (isNaN(value)) {
+        value = 0;
+      }
       break;
     default:
       value = rawValue;
