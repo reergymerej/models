@@ -93,7 +93,7 @@ describe('instantiating a model', function () {
   it('should return default value for a field if not specified during instantiation', function () {
     will(foo.get('baz')).be('the default baz');
   });
-  
+
   describe('converting field values', function () {
     describe('type constants', function () {
       it('should provide constants to use for field type', function () {

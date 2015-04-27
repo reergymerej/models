@@ -6,12 +6,11 @@ var BOOLEAN = 'boolean',
 
 var Model = function () {};
 
-Model.prototype.init = function (config) {
+Model.prototype._init = function (config) {
   var definitionConfig = this.constructor.prototype.config;
-  this.fields = this.createFields(definitionConfig.fields, config);
-  this.setInitialValues(config);
-
-  this.setIdField(definitionConfig.idField);
+  this._fields = this._createFields(definitionConfig.fields, config);
+  this._setInitialValues(config);
+  this._setIdField(definitionConfig.idField);
 };
 
 // gets/sets id field value
@@ -28,14 +27,14 @@ Model.prototype.id = function (value) {
   return id;
 };
 
-Model.prototype.setIdField = function (name) {
+Model.prototype._setIdField = function (name) {
   this._idField = name;
 };
 
 // @param {Object} fieldConfigs
 // @param {Object} fieldValues
 // @return {Field[]}
-Model.prototype.createFields = function (fieldConfigs, fieldValues) {
+Model.prototype._createFields = function (fieldConfigs, fieldValues) {
   var fields = [];
 
   fieldConfigs = fieldConfigs || {};
@@ -47,10 +46,10 @@ Model.prototype.createFields = function (fieldConfigs, fieldValues) {
     return fields;
 };
 
-Model.prototype.setInitialValues = function (fieldValues) {
+Model.prototype._setInitialValues = function (fieldValues) {
   fieldValues = fieldValues || {};
 
-  this.fields.forEach(function (field) {
+  this._fields.forEach(function (field) {
     var value = field.getInitialValue(fieldValues[field.name]);
     this.set(field.name, value);
   }, this);
@@ -66,11 +65,11 @@ Model.prototype.get = function (fieldName) {
 
   if (!fieldName) {
     allValues = {};
-    this.fields.forEach(function (field) {
+    this._fields.forEach(function (field) {
       allValues[field.name] = field.get();
     });
   } else {
-    field = this.getField(fieldName);
+    field = this._getField(fieldName);
     value = field && field.get();
   }
 
@@ -78,7 +77,7 @@ Model.prototype.get = function (fieldName) {
 };
 
 Model.prototype.set = function (fieldName, value) {
-  var field = this.getField(fieldName);
+  var field = this._getField(fieldName);
   if (field) {
     this[fieldName] = value;
     field.set(value);
@@ -87,10 +86,10 @@ Model.prototype.set = function (fieldName, value) {
 
 // @param {String} fieldName
 // @return {Field}
-Model.prototype.getField = function (fieldName) {
+Model.prototype._getField = function (fieldName) {
   var foundField;
 
-  this.fields.every(function (field) {
+  this._fields.every(function (field) {
     if (field.name === fieldName) {
       foundField = field;
     }
@@ -145,8 +144,8 @@ Field.prototype.convertValue = function (rawValue) {
 // @return {Function}
 var extend = function (Parent) {
   function Constructor(config){
-    if (typeof this.init === 'function') {
-      this.init(config || {});
+    if (typeof this._init === 'function') {
+      this._init(config || {});
     }
   }
   Constructor.prototype = Parent.prototype;
