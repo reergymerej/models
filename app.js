@@ -37,8 +37,14 @@ Model.prototype.createFields = function (fieldConfigs, fieldValues) {
   var fields = [];
 
     Object.keys(fieldConfigs || {}).forEach(function (fieldName) {
-      fields.push(new Field(fieldName, fieldConfigs[fieldName], fieldValues[fieldName]));
-    });
+      var field = new Field(fieldName, fieldConfigs[fieldName]),
+        value = fieldValues[fieldName];
+
+
+      // TODO: handle POJO
+      field.setInitialValue(value);
+      fields.push(field);
+    }, this);
 
     return fields;
 };
@@ -67,6 +73,7 @@ Model.prototype.get = function (fieldName) {
 Model.prototype.set = function (fieldName, value) {
   var field = this.getField(fieldName);
   if (field) {
+    this[fieldName] = value;
     field.set(value);
   }
 };
@@ -86,12 +93,10 @@ Model.prototype.getField = function (fieldName) {
   return foundField;
 };
 
-var Field = function (name, config, value) {
+var Field = function (name, config) {
   this.name = name;
   this.type = config.type;
   this.default = config.default;
-
-  this.setInitialValue(value);
 };
 
 Field.prototype.get = function () {

@@ -144,4 +144,28 @@ describe('getting values', function () {
 
     will(model.get('foo')).be('asdf');
   });
+
+  it('should provide access to the field values like a pojo', function () {
+    var Model = app.define('Model', {
+      fields: {
+        foo: { type: app.STRING }
+      }
+    });
+    var model = new Model({ foo: 'asdf' });
+
+    model.set('foo', 'what?');
+
+    will(model.foo).be('what?');
+  });
+
+  it('should provide access to the field values like a pojo even for initial values', function () {
+    var Model = app.define('Model', {
+      fields: {
+        foo: { type: app.STRING }
+      }
+    });
+    var model = new Model({ foo: 'asdf' });
+
+    will(model.foo).be('asdf');
+  });
 });

@@ -44,13 +44,9 @@ foo.get('bar'); // 123
 
 * computed fields
 
-* validation
-  * field
-  * model
+* validation (field/model)
 
-* dirty state
-  * field
-  * model
+* dirty state (field/model)
 
 * static methods
 
