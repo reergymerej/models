@@ -76,12 +76,26 @@ Model.prototype.get = function (fieldName) {
   return fieldName ? value : allValues;
 };
 
+// @param {String/Object} fieldName
+// @param {*} [value]
 Model.prototype.set = function (fieldName, value) {
-  var field = this._getField(fieldName);
-  if (field) {
-    this[fieldName] = value;
-    field.set(value);
+  var values;
+
+  if (arguments.length === 1) {
+    values = fieldName;
+  } else {
+    values = {};
+    values[fieldName] = value;
   }
+
+  Object.keys(values).forEach(function (fieldName) {
+    var field = this._getField(fieldName),
+      value = values[fieldName];
+    if (field) {
+      this[fieldName] = value;
+      field.set(value);
+    }
+  }, this);
 };
 
 // @param {String} fieldName

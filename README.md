@@ -36,6 +36,13 @@ foo.id(); // 'new id'
 
 foo.set('bar', 123);
 foo.get('bar'); // 123
+
+foo.set({
+	name: 'dude',
+	bar: 3.14,
+	baz: false
+})
+foo.get(); // { name: 'dude', bar: 3.14, baz: false }
 ```
 
 ================================================
@@ -53,3 +60,7 @@ foo.get('bar'); // 123
 * save routines
 
 * shorthand definition
+
+* change events
+
+* nested models

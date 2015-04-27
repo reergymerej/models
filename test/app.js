@@ -169,3 +169,29 @@ describe('getting values', function () {
     will(model.foo).be('asdf');
   });
 });
+
+describe('setting values', function () {
+  it('should set multiple fields with an object', function () {
+    var Model = app.define('Model', {
+      fields: {
+        foo: { type: app.STRING },
+        bar: { type: app.STRING },
+        baz: { type: app.NUMBER },
+      }
+    });
+
+    var model = new Model();
+
+    model.set({
+      foo: 'the foo',
+      bar: 'the bar',
+      baz: '111'
+    });
+
+    var values = model.get();
+
+    will(values.foo).be('the foo');
+    will(values.bar).be('the bar');
+    will(values.baz).be(111);
+  });
+});
