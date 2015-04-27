@@ -9,6 +9,8 @@ var Model = function () {};
 Model.prototype.init = function (config) {
   var definitionConfig = this.constructor.prototype.config;
   this.fields = this.createFields(definitionConfig.fields, config);
+  this.setInitialValues(config);
+
   this.setIdField(definitionConfig.idField);
 };
 
@@ -36,17 +38,22 @@ Model.prototype.setIdField = function (name) {
 Model.prototype.createFields = function (fieldConfigs, fieldValues) {
   var fields = [];
 
-    Object.keys(fieldConfigs || {}).forEach(function (fieldName) {
-      var field = new Field(fieldName, fieldConfigs[fieldName]),
-        value = fieldValues[fieldName];
+  fieldConfigs = fieldConfigs || {};
 
-
-      // TODO: handle POJO
-      field.setInitialValue(value);
-      fields.push(field);
-    }, this);
+    Object.keys(fieldConfigs).forEach(function (fieldName) {
+      fields.push(new Field(fieldName, fieldConfigs[fieldName]));
+    });
 
     return fields;
+};
+
+Model.prototype.setInitialValues = function (fieldValues) {
+  fieldValues = fieldValues || {};
+
+  this.fields.forEach(function (field) {
+    var value = field.getInitialValue(fieldValues[field.name]);
+    this.set(field.name, value);
+  }, this);
 };
 
 // get a field value
@@ -103,12 +110,8 @@ Field.prototype.get = function () {
   return this.value;
 };
 
-Field.prototype.setInitialValue = function (value) {
-  if (value === undefined) {
-    this.set(this.default);
-  } else {
-    this.set(value);
-  }
+Field.prototype.getInitialValue = function (value) {
+  return value === undefined ? this.default : value;
 };
 
 Field.prototype.set = function (rawValue) {
