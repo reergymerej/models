@@ -7,7 +7,27 @@ var BOOLEAN = 'boolean',
 var Model = function () {};
 
 Model.prototype.init = function (config) {
-  this.fields = this.createFields(this.constructor.prototype.config.fields, config);
+  var definitionConfig = this.constructor.prototype.config;
+  this.fields = this.createFields(definitionConfig.fields, config);
+  this.setIdField(definitionConfig.idField);
+};
+
+// gets/sets id field value
+// @param {*} [value] if present, sets value
+// @return {*}
+Model.prototype.id = function (value) {
+  var id;
+  if (this._idField) {
+    if (arguments.length) {
+      this.set(this._idField, value);
+    }
+    id = this.get(this._idField);
+  }
+  return id;
+};
+
+Model.prototype.setIdField = function (name) {
+  this._idField = name;
 };
 
 // @param {Object} fieldConfigs
@@ -27,23 +47,43 @@ Model.prototype.createFields = function (fieldConfigs, fieldValues) {
 // @param {String} [fieldName]
 // @return {*}
 Model.prototype.get = function (fieldName) {
-  var allValues = {},
-    value;
+  var allValues,
+    value,
+    field;
 
   if (!fieldName) {
+    allValues = {};
     this.fields.forEach(function (field) {
       allValues[field.name] = field.get();
     });
   } else {
-    this.fields.every(function (field) {
-      if (field.name === fieldName) {
-        value = field.get();
-      }
-      return field.name !== fieldName;
-    });
+    field = this.getField(fieldName);
+    value = field && field.get();
   }
 
   return fieldName ? value : allValues;
+};
+
+Model.prototype.set = function (fieldName, value) {
+  var field = this.getField(fieldName);
+  if (field) {
+    field.set(value);
+  }
+};
+
+// @param {String} fieldName
+// @return {Field}
+Model.prototype.getField = function (fieldName) {
+  var foundField;
+
+  this.fields.every(function (field) {
+    if (field.name === fieldName) {
+      foundField = field;
+    }
+    return field.name !== fieldName;
+  });
+
+  return foundField;
 };
 
 var Field = function (name, config, value) {

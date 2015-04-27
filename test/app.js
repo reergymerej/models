@@ -13,6 +13,35 @@ describe('defining a model', function () {
   it('should return a constructor', function () {
     will(typeof app.define('Foo')).be('function');
   });
+
+  describe('id field', function () {
+    var Model;
+
+    before(function () {
+      Model = app.define('Model', {
+        idField: 'foo',
+        fields: {
+          foo: {
+            type: app.STRING
+          },
+          bar: {
+            type: app.NUMBER
+          }
+        }
+      });
+    });
+
+    it('should allow for identifying a field to be used as the id field', function () {
+      var model = new Model({ foo: 'asdf' });
+      will(model.id()).be('asdf');
+    });
+
+    it('should set the id field by "id"', function () {
+      var model = new Model({ foo: 'asdf' });
+      model.id('new id');
+      will(model.id()).be('new id');
+    });
+  });
 });
 
 describe('instantiating a model', function () {
@@ -101,5 +130,18 @@ describe('instantiating a model', function () {
       });
       will(foo.get('quux')).beA(Number);
     });
+  });
+});
+
+describe('getting values', function () {
+  it('should return values with "get"', function () {
+    var Model = app.define('Model', {
+      fields: {
+        foo: { type: app.STRING }
+      }
+    });
+    var model = new Model({ foo: 'asdf' });
+
+    will(model.get('foo')).be('asdf');
   });
 });

@@ -58,3 +58,12 @@ var foo = new Foo({
 
 foo.get('bar'); // 99
 foo.get(); // { name: 'asdf', bar: 99, baz: true }
+foo.id(); // 'asdf'
+
+## Setting Field Values
+
+foo.id('new id');
+foo.id(); // 'new id'
+
+foo.set('bar', 123);
+foo.get('bar'); // 123
