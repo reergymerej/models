@@ -220,3 +220,31 @@ describe('computed fields', function () {
     will(model.get('fullName')).be('Jeremy Greer');
   });
 });
+
+describe('validation', function () {
+  var Model;
+
+  before(function () {
+    Model = app.define('Model', {
+      idField: 'num',
+      fields: {
+        num: {
+          type: app.NUMBER,
+          valid: function (value) {
+            return value > 3;
+          }
+        }
+      }
+    });
+  });
+
+  it('should allow for field-level validation', function () {
+    var model = new Model();
+    will(model.valid()).be(false);
+  });
+
+  it('should return true if validation is not falsy', function () {
+    var model = new Model({ num: 4 });
+    will(model.valid()).be(true);
+  });
+});

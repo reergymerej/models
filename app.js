@@ -76,6 +76,18 @@ Model.prototype.get = function (fieldName) {
   return fieldName ? value : allValues;
 };
 
+Model.prototype.valid = function () {
+  var valid = true;
+
+  this._fields.forEach(function (field) {
+    if (valid) {
+      valid = !!(field.valid && field.valid(field.get()));
+    }
+  });
+
+  return valid;
+};
+
 Model.prototype._getNonComputedFields = function () {
   var fields = [];
 
@@ -141,6 +153,7 @@ var Field = function (name, config, model) {
   this.default = config.default;
   this.valueFn = config.value;
   this.model = model;
+  this.valid = config.valid;
 };
 
 Field.prototype.get = function () {

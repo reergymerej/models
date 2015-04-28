@@ -71,11 +71,30 @@ var model = new Model({ firstName: 'Jeremy', lastName: 'Greer' });
 model.get('fullName'); // 'Jeremy Greer'
 ```
 
+## Validation
+
+```js
+var Model = app.define('Model', {
+  fields: {
+    num: {
+      type: app.NUMBER,
+      valid: function (fieldValue) {
+        return fieldValue > 3;
+      }
+    }
+  }
+});
+
+var model = new Model();
+model.valid(); // false
+
+model = new Model({ num: 4 });
+model.valid(); // true
+```
+
 ================================================
 
 ### Coming Soon
-
-* computed fields
 
 * validation (field/model)
 
@@ -92,3 +111,5 @@ model.get('fullName'); // 'Jeremy Greer'
 * nested models
 
 * ENUM fields
+
+* destroy (remove handlers automatically)
