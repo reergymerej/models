@@ -45,6 +45,17 @@ foo.set({
 foo.get(); // { name: 'dude', bar: 3.14, baz: false }
 ```
 
+## Observing Changes
+
+```js
+foo.on(app.CHANGE, function (values) {
+  console.log(values);  // { name: 'new name', number: 8675309 }
+});
+
+foo.set({ name: 'new name', number: 8675309 });
+foo.set({ name: 'new name' });  // won't fire handler because nothing changed
+```
+
 ================================================
 
 ### Coming Soon

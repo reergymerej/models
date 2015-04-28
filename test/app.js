@@ -244,11 +244,21 @@ describe('change events', function () {
   });
 
   it('should pass the new values', function (done) {
-    model.on(app.CHANGE, function (event) {
-      will(event).beLike({ number: 99 });
+    model.on(app.CHANGE, function (changes) {
+      will(changes).beLike({ number: 99 });
       done();
     });
 
     model.set('number', 99);
+  });
+
+  it('should not fire when the field did not change', function (done) {
+    model.on(app.CHANGE, function (changes) {
+      will(changes).not.be('name');
+      done();
+    });
+
+    model.set('name', model.get('name'));
+    done();
   });
 });

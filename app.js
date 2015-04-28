@@ -99,17 +99,23 @@ Model.prototype.set = function (fieldName, value) {
 
   Object.keys(setValues).forEach(function (fieldName) {
     var field = this._getField(fieldName),
-      value = setValues[fieldName];
+      value = setValues[fieldName],
+      processedValue;
 
     if (field) {
       this[fieldName] = value;  // raw value
 
       newValues = newValues || {};
-      newValues[fieldName] = field.set(value);  // processed value
+      processedValue = field.set(value);
+      if (processedValue !== undefined) {
+        newValues[fieldName] = processedValue;
+      }
     }
   }, this);
 
-  this._fireHandlers(CHANGE, newValues);
+  if (Object.keys(newValues).length) {
+    this._fireHandlers(CHANGE, newValues);
+  }
 
   return newValues;
 };
