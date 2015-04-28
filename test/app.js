@@ -195,3 +195,28 @@ describe('setting values', function () {
     will(values.baz).be(111);
   });
 });
+
+describe('computed fields', function () {
+  it('should allow for computed field values by a function', function () {
+    var Model = app.define('Model', {
+      fields: {
+        firstName: {
+          type: app.STRING
+        },
+        lastName: {
+          type: app.STRING
+        },
+        fullName: {
+          type: app.STRING,
+          value: function (fieldValues) {
+            return fieldValues.firstName + ' ' + fieldValues.lastName;
+          }
+        }
+      }
+    });
+
+    var model = new Model({ firstName: 'Jeremy', lastName: 'Greer' });
+
+    will(model.get('fullName')).be('Jeremy Greer');
+  });
+});

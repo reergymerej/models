@@ -45,6 +45,32 @@ foo.set({
 foo.get(); // { name: 'dude', bar: 3.14, baz: false }
 ```
 
+
+### Computed Fields
+
+```js
+var Model = app.define('Model', {
+  fields: {
+    firstName: {
+      type: app.STRING
+    },
+    lastName: {
+      type: app.STRING
+    },
+    fullName: {
+      type: app.STRING,
+      value: function (fieldValues) {
+        return fieldValues.firstName + ' ' + fieldValues.lastName;
+      }
+    }
+  }
+});
+
+var model = new Model({ firstName: 'Jeremy', lastName: 'Greer' });
+
+model.get('fullName'); // 'Jeremy Greer'
+```
+
 ================================================
 
 ### Coming Soon
@@ -64,3 +90,5 @@ foo.get(); // { name: 'dude', bar: 3.14, baz: false }
 * change events
 
 * nested models
+
+* ENUM fields

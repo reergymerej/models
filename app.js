@@ -40,8 +40,8 @@ Model.prototype._createFields = function (fieldConfigs, fieldValues) {
   fieldConfigs = fieldConfigs || {};
 
     Object.keys(fieldConfigs).forEach(function (fieldName) {
-      fields.push(new Field(fieldName, fieldConfigs[fieldName]));
-    });
+      fields.push(new Field(fieldName, fieldConfigs[fieldName], this));
+    }, this);
 
     return fields;
 };
@@ -74,6 +74,28 @@ Model.prototype.get = function (fieldName) {
   }
 
   return fieldName ? value : allValues;
+};
+
+Model.prototype._getNonComputedFields = function () {
+  var fields = [];
+
+  this._fields.forEach(function (field) {
+    if (field.valueFn === undefined) {
+      fields.push(field);
+    }
+  });
+
+  return fields;
+};
+
+Model.prototype._getNonComputedFieldValues = function () {
+  var values = {};
+
+  this._getNonComputedFields().forEach(function (field) {
+    values[field.name] = field.get();
+  });
+
+  return values;
 };
 
 // @param {String/Object} fieldName
@@ -113,14 +135,24 @@ Model.prototype._getField = function (fieldName) {
   return foundField;
 };
 
-var Field = function (name, config) {
+var Field = function (name, config, model) {
   this.name = name;
   this.type = config.type;
   this.default = config.default;
+  this.valueFn = config.value;
+  this.model = model;
 };
 
 Field.prototype.get = function () {
-  return this.value;
+  var value;
+
+  if (this.valueFn) {
+    value = this.valueFn(this.model._getNonComputedFieldValues());
+  } else {
+    value = this.value;
+  }
+
+  return value;
 };
 
 Field.prototype.getInitialValue = function (value) {
