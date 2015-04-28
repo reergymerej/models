@@ -248,3 +248,27 @@ describe('validation', function () {
     will(model.valid()).be(true);
   });
 });
+
+describe('enum fields', function () {
+  var Model;
+
+  before(function () {
+    Model = app.define('Model', {
+      fields: {
+        color: {
+          type: app.ENUM,
+          default: 'red',
+          values: ['red', 'white', 'blue']
+        }
+      }
+    });
+  });
+
+  it('should throw when setting to invalid value', function () {
+    var model = new Model();
+
+    will(function () {
+      model.set('color', 'purple');
+    }).throw();
+  });
+});

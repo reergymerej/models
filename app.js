@@ -2,7 +2,8 @@
 
 var BOOLEAN = 'boolean',
   NUMBER = 'number',
-  STRING = 'string';
+  STRING = 'string',
+  ENUM = 'enum';
 
 var Model = function () {};
 
@@ -154,6 +155,7 @@ var Field = function (name, config, model) {
   this.valueFn = config.value;
   this.model = model;
   this.valid = config.valid;
+  this.values = config.values;
 };
 
 Field.prototype.get = function () {
@@ -173,6 +175,13 @@ Field.prototype.getInitialValue = function (value) {
 };
 
 Field.prototype.set = function (rawValue) {
+
+  if (this.type === ENUM) {
+    if ((this.values || []).indexOf(rawValue) === -1) {
+      throw new Error(rawValue + ' is not one of the enums: ' + (this.values || []).join(', '));
+    }
+  }
+
   this.rawValue = rawValue;
   this.value = this.convertValue(rawValue);
 };
@@ -228,3 +237,4 @@ exports.define = define;
 exports.BOOLEAN = BOOLEAN;
 exports.STRING = STRING;
 exports.NUMBER = NUMBER;
+exports.ENUM = ENUM;

@@ -38,9 +38,9 @@ foo.set('bar', 123);
 foo.get('bar'); // 123
 
 foo.set({
-	name: 'dude',
-	bar: 3.14,
-	baz: false
+    name: 'dude',
+    bar: 3.14,
+    baz: false
 })
 foo.get(); // { name: 'dude', bar: 3.14, baz: false }
 ```
@@ -69,6 +69,26 @@ var Model = app.define('Model', {
 var model = new Model({ firstName: 'Jeremy', lastName: 'Greer' });
 
 model.get('fullName'); // 'Jeremy Greer'
+```
+
+### ENUM Fields
+
+```js
+var Model = app.define('Model', {
+  fields: {
+    color: {
+      type: app.ENUM,
+      default: 'red',
+      values: ['red', 'white', 'blue']
+    }
+  }
+});
+
+var model = new Model();
+
+model.get('color');  // 'red'
+model.set('color', 'purple');  // throws error
+
 ```
 
 ## Validation
