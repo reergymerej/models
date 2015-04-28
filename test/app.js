@@ -171,7 +171,9 @@ describe('getting values', function () {
 });
 
 describe('setting values', function () {
-  it('should set multiple fields with an object', function () {
+  var model;
+
+  before(function () {
     var Model = app.define('Model', {
       fields: {
         foo: { type: app.STRING },
@@ -179,8 +181,10 @@ describe('setting values', function () {
         baz: { type: app.NUMBER },
       }
     });
+    model = new Model();
+  });
 
-    var model = new Model();
+  it('should set multiple fields with an object', function () {
 
     model.set({
       foo: 'the foo',
@@ -193,6 +197,13 @@ describe('setting values', function () {
     will(values.foo).be('the foo');
     will(values.bar).be('the bar');
     will(values.baz).be(111);
+  });
+
+  it('should return a hash of the new values', function () {
+    var newVals = { foo: 'new foo', bar: 'new bar' },
+      changes = model.set(newVals);
+
+    will(changes).beLike(newVals);
   });
 });
 
@@ -225,8 +236,16 @@ describe('change events', function () {
   });
 
   it('should execute a handler when a field changes', function (done) {
-    model.on('change', function () {
-      will(1).be(1);
+    model.on(app.CHANGE, function () {
+      done();
+    });
+
+    model.set('number', 99);
+  });
+
+  it('should pass the new values', function (done) {
+    model.on(app.CHANGE, function (event) {
+      will(event).beLike({ number: 99 });
       done();
     });
 

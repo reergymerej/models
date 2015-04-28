@@ -2,7 +2,8 @@
 
 var BOOLEAN = 'boolean',
   NUMBER = 'number',
-  STRING = 'string';
+  STRING = 'string',
+  CHANGE = 'change';
 
 var Model = function () {};
 
@@ -86,32 +87,37 @@ Model.prototype.get = function (fieldName) {
 // @param {String/Object} fieldName
 // @param {*} [value]
 Model.prototype.set = function (fieldName, value) {
-  var values;
+  var setValues,
+    newValues;
 
   if (arguments.length === 1) {
-    values = fieldName;
+    setValues = fieldName;
   } else {
-    values = {};
-    values[fieldName] = value;
+    setValues = {};
+    setValues[fieldName] = value;
   }
 
-  Object.keys(values).forEach(function (fieldName) {
+  Object.keys(setValues).forEach(function (fieldName) {
     var field = this._getField(fieldName),
-      value = values[fieldName];
+      value = setValues[fieldName];
+
     if (field) {
-      this[fieldName] = value;
-      field.set(value);
+      this[fieldName] = value;  // raw value
+
+      newValues = newValues || {};
+      newValues[fieldName] = field.set(value);  // processed value
     }
   }, this);
 
-  this._fireHandlers('change');
+  this._fireHandlers(CHANGE, newValues);
+
+  return newValues;
 };
 
-Model.prototype._fireHandlers = function (eventName) {
-  // TODO: get handlers method
+Model.prototype._fireHandlers = function (eventName, eventData) {
   var handlers = this._handlers || {};
   (handlers[eventName] || []).forEach(function (handler) {
-    handler();
+    handler(eventData);
   });
 };
 
@@ -144,9 +150,13 @@ Field.prototype.getInitialValue = function (value) {
   return value === undefined ? this.default : value;
 };
 
+// return {*}
 Field.prototype.set = function (rawValue) {
+  var lastVal = this.value;
   this.rawValue = rawValue;
   this.value = this.convertValue(rawValue);
+  
+  return this.value !== lastVal ? this.value : undefined;
 };
 
 Field.prototype.convertValue = function (rawValue) {
@@ -200,3 +210,4 @@ exports.define = define;
 exports.BOOLEAN = BOOLEAN;
 exports.STRING = STRING;
 exports.NUMBER = NUMBER;
+exports.CHANGE = CHANGE;
