@@ -262,3 +262,36 @@ describe('change events', function () {
     done();
   });
 });
+
+describe('dirty state', function () {
+  var model;
+
+  beforeEach(function () {
+    var Model = app.define('Model', {
+      fields: {
+        foo: { type: app.STRING },
+        bar: { type: app.NUMBER },
+        baz: { type: app.NUMBER },
+      }
+    });
+    model = new Model({
+      foo: 'asdf',
+      bar: 123,
+      baz: 999
+    });
+  });
+
+  it('should not be dirty at first', function () {
+    will(model.dirty()).beFalsy();
+  });
+
+  it('should be dirty after a field has been changed', function () {
+    model.set('foo', 'eee');
+    will(model.dirty()).beLike({ foo: 'eee' });
+  });
+
+  it('should not be dirty if nothing has been changed', function () {
+    model.set('foo', model.get('foo'));
+    will(model.dirty()).beFalsy();
+  });
+});

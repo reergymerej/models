@@ -56,22 +56,26 @@ foo.set({ name: 'new name', number: 8675309 });
 foo.set({ name: 'new name' });  // won't fire handler because nothing changed
 ```
 
+## Check Dirty State
+
+```js
+foo = new Foo({ name: 'a foo', bar: 66 });
+foo.dirty(); // undefined
+
+foo.set({ name: 'new name' });
+foo.dirty(); // { name: 'new name' }
+
+foo.set({ bar: 77 });
+foo.dirty(); // { name: 'new name', bar: 77 }
+```
+
 ================================================
 
 ### Coming Soon
 
 * computed fields
-
 * validation (field/model)
-
-* dirty state (field/model)
-
 * static methods
-
 * save routines
-
 * shorthand definition
-
-* change events
-
 * nested models

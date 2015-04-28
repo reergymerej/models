@@ -53,9 +53,34 @@ Model.prototype._setInitialValues = function (fieldValues) {
   this._fields.forEach(function (field) {
     var value = field.getInitialValue(fieldValues[field.name]);
     this.set(field.name, value);
+    this._dirty = null;
   }, this);
 };
 
+Model.prototype._fireHandlers = function (eventName, eventData) {
+  var handlers = this._handlers || {};
+  (handlers[eventName] || []).forEach(function (handler) {
+    handler(eventData);
+  });
+};
+
+// @param {String} fieldName
+// @return {Field}
+Model.prototype._getField = function (fieldName) {
+  var foundField;
+
+  this._fields.every(function (field) {
+    if (field.name === fieldName) {
+      foundField = field;
+    }
+    return field.name !== fieldName;
+  });
+
+  return foundField;
+};
+
+// ================================================
+// Model public
 Model.prototype.on = function (eventName, handler) {
   // TODO: get handlers method
   this._handlers = this._handlers || {};
@@ -113,6 +138,11 @@ Model.prototype.set = function (fieldName, value) {
     }
   }, this);
 
+  this._dirty = this._dirty || {};
+  (Object.keys(newValues) || []).forEach(function (fieldName) {
+    this._dirty[fieldName] = newValues[fieldName];
+  }, this);
+
   if (Object.keys(newValues).length) {
     this._fireHandlers(CHANGE, newValues);
   }
@@ -120,28 +150,11 @@ Model.prototype.set = function (fieldName, value) {
   return newValues;
 };
 
-Model.prototype._fireHandlers = function (eventName, eventData) {
-  var handlers = this._handlers || {};
-  (handlers[eventName] || []).forEach(function (handler) {
-    handler(eventData);
-  });
+Model.prototype.dirty = function () {
+  return Object.keys(this._dirty || {}).length ? this._dirty : undefined;
 };
 
-// @param {String} fieldName
-// @return {Field}
-Model.prototype._getField = function (fieldName) {
-  var foundField;
-
-  this._fields.every(function (field) {
-    if (field.name === fieldName) {
-      foundField = field;
-    }
-    return field.name !== fieldName;
-  });
-
-  return foundField;
-};
-
+// ================================================
 var Field = function (name, config) {
   this.name = name;
   this.type = config.type;
