@@ -195,3 +195,41 @@ describe('setting values', function () {
     will(values.baz).be(111);
   });
 });
+
+describe('change events', function () {
+  var model, Model;
+
+  before(function () {
+    Model = app.define('Model', {
+      idField: 'id',
+      fields: {
+        name: {
+          type: app.STRING,
+          default: 'John Doe'
+        },
+
+        number: {
+          type: app.NUMBER
+        },
+
+        isDead: {
+          type: app.BOOLEAN,
+          default: false
+        }
+      }
+    });
+  });
+
+  beforeEach(function () {
+    model = new Model();
+  });
+
+  it('should execute a handler when a field changes', function (done) {
+    model.on('change', function () {
+      will(1).be(1);
+      done();
+    });
+
+    model.set('number', 99);
+  });
+});

@@ -55,6 +55,13 @@ Model.prototype._setInitialValues = function (fieldValues) {
   }, this);
 };
 
+Model.prototype.on = function (eventName, handler) {
+  // TODO: get handlers method
+  this._handlers = this._handlers || {};
+  this._handlers[eventName] = this._handlers[eventName] || [];
+  this._handlers[eventName].push(handler);
+};
+
 // get a field value
 // @param {String} [fieldName]
 // @return {*}
@@ -96,6 +103,16 @@ Model.prototype.set = function (fieldName, value) {
       field.set(value);
     }
   }, this);
+
+  this._fireHandlers('change');
+};
+
+Model.prototype._fireHandlers = function (eventName) {
+  // TODO: get handlers method
+  var handlers = this._handlers || {};
+  (handlers[eventName] || []).forEach(function (handler) {
+    handler();
+  });
 };
 
 // @param {String} fieldName
