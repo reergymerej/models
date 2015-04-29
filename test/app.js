@@ -258,6 +258,20 @@ describe('validation', function () {
     var model = new Model({ num: 4 });
     will(model.valid()).be(true);
   });
+
+  it('should return true for models with no validation rules', function () {
+    var Model = app.define('Model', {
+      fields: {
+        name: {
+          type: app.STRING,
+          default: 'hello'
+        }
+      }
+    });
+    var model = new Model();
+
+    will(model.valid()).be(true);
+  });
 });
 
 describe('change events', function () {
@@ -287,7 +301,7 @@ describe('change events', function () {
   beforeEach(function () {
     model = new Model();
   });
-  
+
   it('should execute a handler when a field changes', function (done) {
     model.on(app.CHANGE, function () {
       done();

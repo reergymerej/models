@@ -114,8 +114,8 @@ Model.prototype.valid = function () {
   var valid = true;
 
   this._fields.forEach(function (field) {
-    if (valid) {
-      valid = !!(field.valid && field.valid(field.get()));
+    if (valid && typeof field.valid === 'function') {
+      valid = !!(field.valid(field.get()));
     }
   });
 
@@ -228,7 +228,7 @@ Field.prototype.set = function (rawValue) {
 
   this.rawValue = rawValue;
   this.value = this.convertValue(rawValue);
-  
+
   return this.value !== lastVal ? this.value : undefined;
 };
 
