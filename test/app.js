@@ -207,6 +207,59 @@ describe('setting values', function () {
   });
 });
 
+describe('computed fields', function () {
+  it('should allow for computed field values by a function', function () {
+    var Model = app.define('Model', {
+      fields: {
+        firstName: {
+          type: app.STRING
+        },
+        lastName: {
+          type: app.STRING
+        },
+        fullName: {
+          type: app.STRING,
+          value: function (fieldValues) {
+            return fieldValues.firstName + ' ' + fieldValues.lastName;
+          }
+        }
+      }
+    });
+
+    var model = new Model({ firstName: 'Jeremy', lastName: 'Greer' });
+
+    will(model.get('fullName')).be('Jeremy Greer');
+  });
+});
+
+describe('validation', function () {
+  var Model;
+
+  before(function () {
+    Model = app.define('Model', {
+      idField: 'num',
+      fields: {
+        num: {
+          type: app.NUMBER,
+          valid: function (value) {
+            return value > 3;
+          }
+        }
+      }
+    });
+  });
+
+  it('should allow for field-level validation', function () {
+    var model = new Model();
+    will(model.valid()).be(false);
+  });
+
+  it('should return true if validation is not falsy', function () {
+    var model = new Model({ num: 4 });
+    will(model.valid()).be(true);
+  });
+});
+
 describe('change events', function () {
   var model, Model;
 
@@ -234,7 +287,7 @@ describe('change events', function () {
   beforeEach(function () {
     model = new Model();
   });
-
+  
   it('should execute a handler when a field changes', function (done) {
     model.on(app.CHANGE, function () {
       done();
@@ -260,6 +313,30 @@ describe('change events', function () {
 
     model.set('name', model.get('name'));
     done();
+  });
+});
+
+describe('enum fields', function () {
+  var Model;
+
+  before(function () {
+    Model = app.define('Model', {
+      fields: {
+        color: {
+          type: app.ENUM,
+          default: 'red',
+          values: ['red', 'white', 'blue']
+        }
+      }
+    });
+  });
+
+  it('should throw when setting to invalid value', function () {
+    var model = new Model();
+
+    will(function () {
+      model.set('color', 'purple');
+    }).throw();
   });
 });
 

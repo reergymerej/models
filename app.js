@@ -3,6 +3,7 @@
 var BOOLEAN = 'boolean',
   NUMBER = 'number',
   STRING = 'string',
+  ENUM = 'enum',
   CHANGE = 'change';
 
 var Model = function () {};
@@ -41,8 +42,8 @@ Model.prototype._createFields = function (fieldConfigs, fieldValues) {
   fieldConfigs = fieldConfigs || {};
 
     Object.keys(fieldConfigs).forEach(function (fieldName) {
-      fields.push(new Field(fieldName, fieldConfigs[fieldName]));
-    });
+      fields.push(new Field(fieldName, fieldConfigs[fieldName], this));
+    }, this);
 
     return fields;
 };
@@ -109,6 +110,40 @@ Model.prototype.get = function (fieldName) {
   return fieldName ? value : allValues;
 };
 
+Model.prototype.valid = function () {
+  var valid = true;
+
+  this._fields.forEach(function (field) {
+    if (valid) {
+      valid = !!(field.valid && field.valid(field.get()));
+    }
+  });
+
+  return valid;
+};
+
+Model.prototype._getNonComputedFields = function () {
+  var fields = [];
+
+  this._fields.forEach(function (field) {
+    if (field.valueFn === undefined) {
+      fields.push(field);
+    }
+  });
+
+  return fields;
+};
+
+Model.prototype._getNonComputedFieldValues = function () {
+  var values = {};
+
+  this._getNonComputedFields().forEach(function (field) {
+    values[field.name] = field.get();
+  });
+
+  return values;
+};
+
 // @param {String/Object} fieldName
 // @param {*} [value]
 Model.prototype.set = function (fieldName, value) {
@@ -155,14 +190,26 @@ Model.prototype.dirty = function () {
 };
 
 // ================================================
-var Field = function (name, config) {
+var Field = function (name, config, model) {
   this.name = name;
   this.type = config.type;
   this.default = config.default;
+  this.valueFn = config.value;
+  this.model = model;
+  this.valid = config.valid;
+  this.values = config.values;
 };
 
 Field.prototype.get = function () {
-  return this.value;
+  var value;
+
+  if (this.valueFn) {
+    value = this.valueFn(this.model._getNonComputedFieldValues());
+  } else {
+    value = this.value;
+  }
+
+  return value;
 };
 
 Field.prototype.getInitialValue = function (value) {
@@ -172,6 +219,13 @@ Field.prototype.getInitialValue = function (value) {
 // return {*}
 Field.prototype.set = function (rawValue) {
   var lastVal = this.value;
+
+  if (this.type === ENUM) {
+    if ((this.values || []).indexOf(rawValue) === -1) {
+      throw new Error(rawValue + ' is not one of the enums: ' + (this.values || []).join(', '));
+    }
+  }
+
   this.rawValue = rawValue;
   this.value = this.convertValue(rawValue);
   
@@ -229,4 +283,5 @@ exports.define = define;
 exports.BOOLEAN = BOOLEAN;
 exports.STRING = STRING;
 exports.NUMBER = NUMBER;
+exports.ENUM = ENUM;
 exports.CHANGE = CHANGE;

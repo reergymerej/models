@@ -8,7 +8,7 @@ This is a library for creating models.  It is the M in MVC.
 ```js
 var model = require('model');
 
-Foo = model.define('Foo', {
+var Foo = model.define('Foo', {
   idField: 'name',
   fields: {
     name: { type: model.STRING },
@@ -38,11 +38,76 @@ foo.set('bar', 123);
 foo.get('bar'); // 123
 
 foo.set({
-	name: 'dude',
-	bar: 3.14,
-	baz: false
+    name: 'dude',
+    bar: 3.14,
+    baz: false
 })
 foo.get(); // { name: 'dude', bar: 3.14, baz: false }
+```
+
+### Computed Fields
+
+```js
+var Model = app.define('Model', {
+  fields: {
+    firstName: {
+      type: app.STRING
+    },
+    lastName: {
+      type: app.STRING
+    },
+    fullName: {
+      type: app.STRING,
+      value: function (fieldValues) {
+        return fieldValues.firstName + ' ' + fieldValues.lastName;
+      }
+    }
+  }
+});
+
+var model = new Model({ firstName: 'Jeremy', lastName: 'Greer' });
+
+model.get('fullName'); // 'Jeremy Greer'
+```
+
+### ENUM Fields
+
+```js
+var Model = app.define('Model', {
+  fields: {
+    color: {
+      type: app.ENUM,
+      default: 'red',
+      values: ['red', 'white', 'blue']
+    }
+  }
+});
+
+var model = new Model();
+
+model.get('color');  // 'red'
+model.set('color', 'purple');  // throws error
+```
+
+## Validation
+
+```js
+var Model = app.define('Model', {
+  fields: {
+    num: {
+      type: app.NUMBER,
+      valid: function (fieldValue) {
+        return fieldValue > 3;
+      }
+    }
+  }
+});
+
+var model = new Model();
+model.valid(); // false
+
+model = new Model({ num: 4 });
+model.valid(); // true
 ```
 
 ## Observing Changes
@@ -73,8 +138,6 @@ foo.dirty(); // { name: 'new name', bar: 77 }
 
 ### Coming Soon
 
-* computed fields
-* validation (field/model)
 * static methods
 * save routines
 * shorthand definition
