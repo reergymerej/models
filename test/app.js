@@ -386,3 +386,39 @@ describe('dirty state', function () {
     will(model.dirty()).beFalsy();
   });
 });
+
+describe('static methods', function () {
+  var Model;
+
+  before(function () {
+    Model = app.define('Model', {
+      fields: {
+        number: {
+          type: app.NUMBER
+        }
+      },
+      getNumber: function () {
+        var number;
+
+        if (this.get) {
+          // called from an instance of Model
+          number = this.get('number');
+        } else {
+          // called from Model as static
+          number = 1234;
+        }
+
+        return 'The number is ' + number;
+      }
+    });
+  });
+
+  it('should be available in the model', function () {
+    will(Model.getNumber()).be('The number is ' + 1234);
+  });
+
+  it('should work from instances', function () {
+    var model = new Model({ number: 999 });
+    will(model.getNumber()).be('The number is ' + 999);
+  });
+});

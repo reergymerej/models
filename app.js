@@ -8,11 +8,21 @@ var BOOLEAN = 'boolean',
 
 var Model = function () {};
 
-Model.prototype._init = function (config) {
-  var definitionConfig = this.constructor.prototype.config;
-  this._fields = this._createFields(definitionConfig.fields, config);
-  this._setInitialValues(config);
-  this._setIdField(definitionConfig.idField);
+Model.prototype._init = function (instanceConfig) {
+  var classConfig = this.constructor.prototype.config;
+  this._fields = this._createFields(classConfig.fields, instanceConfig);
+  this._setInitialValues(instanceConfig);
+  this._setIdField(classConfig.idField);
+
+  // this._setStaticMethods(classConfig);
+};
+
+Model.prototype._setStaticMethods = function (config) {
+  Object.keys(config || {}).forEach(function (field) {
+    if (typeof config[field] === 'function') {
+      this.constructor.prototype[field] = config[field];
+    }
+  }, this);
 };
 
 // gets/sets id field value
@@ -271,6 +281,18 @@ var createModelConstructor = function (name, config) {
 
   Constructor.prototype.type = name;
   Constructor.prototype.config = config;
+
+  var setStaticMethods = function (config, Constructor) {
+    Object.keys(config || {}).forEach(function (field) {
+      if (typeof config[field] === 'function') {
+        Constructor[field] = config[field];
+        // for access from instances
+        Constructor.prototype[field] = config[field];
+      }
+    });
+  };
+
+  setStaticMethods(config, Constructor);
 
   return Constructor;
 };
