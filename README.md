@@ -1,7 +1,6 @@
-# Model (working title)
+# Model [![Build Status](https://travis-ci.org/reergymerej/models.svg?branch=master)](https://travis-ci.org/reergymerej/models)
 
-This is a library for creating models.  It is the M in MVC.
-
+This is an unassuming library for creating JavaScript models.  It's the M of MVC.
 
 ## Definition
 
