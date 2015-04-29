@@ -47,16 +47,16 @@ foo.get(); // { name: 'dude', bar: 3.14, baz: false }
 ### Computed Fields
 
 ```js
-var Model = app.define('Model', {
+var Foo = models.define('Foo', {
   fields: {
     firstName: {
-      type: app.STRING
+      type: models.STRING
     },
     lastName: {
-      type: app.STRING
+      type: models.STRING
     },
     fullName: {
-      type: app.STRING,
+      type: models.STRING,
       value: function (fieldValues) {
         return fieldValues.firstName + ' ' + fieldValues.lastName;
       }
@@ -64,37 +64,37 @@ var Model = app.define('Model', {
   }
 });
 
-var model = new Model({ firstName: 'Jeremy', lastName: 'Greer' });
+var foo = new Foo({ firstName: 'Jeremy', lastName: 'Greer' });
 
-model.get('fullName'); // 'Jeremy Greer'
+foo.get('fullName'); // 'Jeremy Greer'
 ```
 
 ### ENUM Fields
 
 ```js
-var Model = app.define('Model', {
+var Foo = models.define('Foo', {
   fields: {
     color: {
-      type: app.ENUM,
+      type: models.ENUM,
       default: 'red',
       values: ['red', 'white', 'blue']
     }
   }
 });
 
-var model = new Model();
+var foo = new Foo();
 
-model.get('color');  // 'red'
-model.set('color', 'purple');  // throws error
+foo.get('color');  // 'red'
+foo.set('color', 'purple');  // throws error
 ```
 
 ## Validation
 
 ```js
-var Model = app.define('Model', {
+var Foo = models.define('Foo', {
   fields: {
     num: {
-      type: app.NUMBER,
+      type: models.NUMBER,
       valid: function (fieldValue) {
         return fieldValue > 3;
       }
@@ -102,17 +102,17 @@ var Model = app.define('Model', {
   }
 });
 
-var model = new Model();
-model.valid(); // false
+var foo = new Foo();
+foo.valid(); // false
 
-model = new Model({ num: 4 });
-model.valid(); // true
+foo = new Foo({ num: 4 });
+foo.valid(); // true
 ```
 
 ## Observing Changes
 
 ```js
-foo.on(app.CHANGE, function (values) {
+foo.on(models.CHANGE, function (values) {
   console.log(values);  // { name: 'new name', number: 8675309 }
 });
 
