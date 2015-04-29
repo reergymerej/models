@@ -171,7 +171,9 @@ describe('getting values', function () {
 });
 
 describe('setting values', function () {
-  it('should set multiple fields with an object', function () {
+  var model;
+
+  before(function () {
     var Model = app.define('Model', {
       fields: {
         foo: { type: app.STRING },
@@ -179,8 +181,10 @@ describe('setting values', function () {
         baz: { type: app.NUMBER },
       }
     });
+    model = new Model();
+  });
 
-    var model = new Model();
+  it('should set multiple fields with an object', function () {
 
     model.set({
       foo: 'the foo',
@@ -193,6 +197,13 @@ describe('setting values', function () {
     will(values.foo).be('the foo');
     will(values.bar).be('the bar');
     will(values.baz).be(111);
+  });
+
+  it('should return a hash of the new values', function () {
+    var newVals = { foo: 'new foo', bar: 'new bar' },
+      changes = model.set(newVals);
+
+    will(changes).beLike(newVals);
   });
 });
 
@@ -249,6 +260,62 @@ describe('validation', function () {
   });
 });
 
+describe('change events', function () {
+  var model, Model;
+
+  before(function () {
+    Model = app.define('Model', {
+      idField: 'id',
+      fields: {
+        name: {
+          type: app.STRING,
+          default: 'John Doe'
+        },
+
+        number: {
+          type: app.NUMBER
+        },
+
+        isDead: {
+          type: app.BOOLEAN,
+          default: false
+        }
+      }
+    });
+  });
+
+  beforeEach(function () {
+    model = new Model();
+  });
+  
+  it('should execute a handler when a field changes', function (done) {
+    model.on(app.CHANGE, function () {
+      done();
+    });
+
+    model.set('number', 99);
+  });
+
+  it('should pass the new values', function (done) {
+    model.on(app.CHANGE, function (changes) {
+      will(changes).beLike({ number: 99 });
+      done();
+    });
+
+    model.set('number', 99);
+  });
+
+  it('should not fire when the field did not change', function (done) {
+    model.on(app.CHANGE, function (changes) {
+      will(changes).not.be('name');
+      done();
+    });
+
+    model.set('name', model.get('name'));
+    done();
+  });
+});
+
 describe('enum fields', function () {
   var Model;
 
@@ -270,5 +337,38 @@ describe('enum fields', function () {
     will(function () {
       model.set('color', 'purple');
     }).throw();
+  });
+});
+
+describe('dirty state', function () {
+  var model;
+
+  beforeEach(function () {
+    var Model = app.define('Model', {
+      fields: {
+        foo: { type: app.STRING },
+        bar: { type: app.NUMBER },
+        baz: { type: app.NUMBER },
+      }
+    });
+    model = new Model({
+      foo: 'asdf',
+      bar: 123,
+      baz: 999
+    });
+  });
+
+  it('should not be dirty at first', function () {
+    will(model.dirty()).beFalsy();
+  });
+
+  it('should be dirty after a field has been changed', function () {
+    model.set('foo', 'eee');
+    will(model.dirty()).beLike({ foo: 'eee' });
+  });
+
+  it('should not be dirty if nothing has been changed', function () {
+    model.set('foo', model.get('foo'));
+    will(model.dirty()).beFalsy();
   });
 });
