@@ -133,34 +133,20 @@ foo.set({ bar: 77 });
 foo.dirty(); // { name: 'new name', bar: 77 }
 ```
 
-## Static Methods
+## Instance Methods
 
 ```js
-var Foo = app.define('Foo', {
-    fields: {
-      number: { type: app.NUMBER }
-    },
+var Foo = app.define('Model', {
+  fields: {
+    number: { type: app.NUMBER }
+  },
 
-    // static method
-    getNumber: function () {
-      var number;
-
-      if (this.get) {
-        // called from an instance of Foo
-        number = this.get('number');
-      } else {
-        // called from Foo as static
-        number = 1234;
-      }
-
-      return 'The number is ' + number;
-    }
-  });
+  // instance method
+  getNumber: function () {
+    return 'The number is ' + this.get('number');
+  }
 });
 
-Foo.getNumber(); // 'The number is 1234'
-
-// works from instances, too
 var foo = new Foo({ number: 999 });
 foo.getNumber(); // 'The number is 999'
 ```
@@ -169,7 +155,6 @@ foo.getNumber(); // 'The number is 999'
 
 ### Coming Soon
 
-* static methods
 * save routines
 * shorthand definition
 * nested models

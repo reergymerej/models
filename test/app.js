@@ -387,34 +387,20 @@ describe('dirty state', function () {
   });
 });
 
-describe('static methods', function () {
+describe('instance methods', function () {
   var Model;
 
   before(function () {
     Model = app.define('Model', {
       fields: {
-        number: {
-          type: app.NUMBER
-        }
+        number: { type: app.NUMBER }
       },
+
+      // instance method
       getNumber: function () {
-        var number;
-
-        if (this.get) {
-          // called from an instance of Model
-          number = this.get('number');
-        } else {
-          // called from Model as static
-          number = 1234;
-        }
-
-        return 'The number is ' + number;
+        return 'The number is ' + this.get('number');
       }
     });
-  });
-
-  it('should be available in the model', function () {
-    will(Model.getNumber()).be('The number is ' + 1234);
   });
 
   it('should work from instances', function () {
