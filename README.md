@@ -1,6 +1,5 @@
-# Sledom [![Build Status](https://travis-ci.org/reergymerej/sledom.svg?branch=master)](https://travis-ci.org/reergymerej/sledom)
-
-version 0.1.0
+# Sledom
+[![Build Status](https://travis-ci.org/reergymerej/sledom.svg?branch=master)](https://travis-ci.org/reergymerej/sledom) v 0.1.0
 
 This is an unassuming library for creating JavaScript models.
 

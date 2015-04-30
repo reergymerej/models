@@ -1,5 +1,5 @@
 {
-  "name": "models",
+  "name": "sledom",
   "version": "0.1.0",
   "description": "an unassuming library for creating JavaScript models",
   "main": "app.js",
