@@ -52,7 +52,7 @@ dude.get();  // { name: 'Lebowski', eyeColor: 'blue', age: 43 }
 
 Now that's just the beginning.  Keep scrolling for more.
 
-Sledom is in active development, so your feedback and questions are appreciated.  
+Sledom is in active development, so your feedback and questions are appreciated.
 https://github.com/reergymerej/sledom/issues
 
 ## Definition
@@ -202,6 +202,28 @@ var Foo = app.define('Model', {
 
 var foo = new Foo({ number: 999 });
 foo.getNumber(); // 'The number is 999'
+```
+
+## Custom Field Types
+
+```js
+function Foo() {}
+Foo.prototype.proveFooness = function () {
+  return 'I am a Foo.';
+};
+
+var Model = sledom.define('Model', {
+  fields: {
+    foo: {
+      // custom field type
+      type: Foo
+    }
+  }
+});
+
+var model = new Model();
+
+model.get('foo').proveFooness(); // 'I am a Foo.'
 ```
 
 ================================================

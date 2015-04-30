@@ -1,31 +1,31 @@
 'use strict';
 
 var will = require('willy').will,
-  app = require('../app');
+  sledom = require('../app');
 
 describe('sanity', function () {
   it('should be present', function () {
-    will(app).exist();
+    will(sledom).exist();
   });
 });
 
 describe('defining a model', function () {
   it('should return a constructor', function () {
-    will(typeof app.define('Foo')).be('function');
+    will(typeof sledom.define('Foo')).be('function');
   });
 
   describe('id field', function () {
     var Model;
 
     before(function () {
-      Model = app.define('Model', {
+      Model = sledom.define('Model', {
         idField: 'foo',
         fields: {
           foo: {
-            type: app.STRING
+            type: sledom.STRING
           },
           bar: {
-            type: app.NUMBER
+            type: sledom.NUMBER
           }
         }
       });
@@ -49,23 +49,23 @@ describe('instantiating a model', function () {
       Foo;
 
   before(function () {
-    Foo = app.define('Foo', {
+    Foo = sledom.define('Foo', {
       fields: {
         foo: {
-          type: app.BOOLEAN
+          type: sledom.BOOLEAN
         },
         bar: {
-          type: app.STRING
+          type: sledom.STRING
         },
         baz: {
-          type: app.STRING,
+          type: sledom.STRING,
           default: 'the default baz'
         },
         quux: {
-          type: app.NUMBER
+          type: sledom.NUMBER
         },
         numAsString: {
-          type: app.STRING,
+          type: sledom.STRING,
           default: '123'
         }
       }
@@ -97,7 +97,7 @@ describe('instantiating a model', function () {
   describe('converting field values', function () {
     describe('type constants', function () {
       it('should provide constants to use for field type', function () {
-        will(app).have(['BOOLEAN', 'STRING', 'NUMBER']);
+        will(sledom).have(['BOOLEAN', 'STRING', 'NUMBER']);
       });
     });
 
@@ -135,9 +135,9 @@ describe('instantiating a model', function () {
 
 describe('getting values', function () {
   it('should return values with "get"', function () {
-    var Model = app.define('Model', {
+    var Model = sledom.define('Model', {
       fields: {
-        foo: { type: app.STRING }
+        foo: { type: sledom.STRING }
       }
     });
     var model = new Model({ foo: 'asdf' });
@@ -146,9 +146,9 @@ describe('getting values', function () {
   });
 
   it('should provide access to the field values like a pojo', function () {
-    var Model = app.define('Model', {
+    var Model = sledom.define('Model', {
       fields: {
-        foo: { type: app.STRING }
+        foo: { type: sledom.STRING }
       }
     });
     var model = new Model({ foo: 'asdf' });
@@ -159,9 +159,9 @@ describe('getting values', function () {
   });
 
   it('should provide access to the field values like a pojo even for initial values', function () {
-    var Model = app.define('Model', {
+    var Model = sledom.define('Model', {
       fields: {
-        foo: { type: app.STRING }
+        foo: { type: sledom.STRING }
       }
     });
     var model = new Model({ foo: 'asdf' });
@@ -174,11 +174,11 @@ describe('setting values', function () {
   var model;
 
   before(function () {
-    var Model = app.define('Model', {
+    var Model = sledom.define('Model', {
       fields: {
-        foo: { type: app.STRING },
-        bar: { type: app.STRING },
-        baz: { type: app.NUMBER },
+        foo: { type: sledom.STRING },
+        bar: { type: sledom.STRING },
+        baz: { type: sledom.NUMBER },
       }
     });
     model = new Model();
@@ -209,16 +209,16 @@ describe('setting values', function () {
 
 describe('computed fields', function () {
   it('should allow for computed field values by a function', function () {
-    var Model = app.define('Model', {
+    var Model = sledom.define('Model', {
       fields: {
         firstName: {
-          type: app.STRING
+          type: sledom.STRING
         },
         lastName: {
-          type: app.STRING
+          type: sledom.STRING
         },
         fullName: {
-          type: app.STRING,
+          type: sledom.STRING,
           value: function (fieldValues) {
             return fieldValues.firstName + ' ' + fieldValues.lastName;
           }
@@ -236,11 +236,11 @@ describe('validation', function () {
   var Model;
 
   before(function () {
-    Model = app.define('Model', {
+    Model = sledom.define('Model', {
       idField: 'num',
       fields: {
         num: {
-          type: app.NUMBER,
+          type: sledom.NUMBER,
           valid: function (value) {
             return value > 3;
           }
@@ -260,10 +260,10 @@ describe('validation', function () {
   });
 
   it('should return true for models with no validation rules', function () {
-    var Model = app.define('Model', {
+    var Model = sledom.define('Model', {
       fields: {
         name: {
-          type: app.STRING,
+          type: sledom.STRING,
           default: 'hello'
         }
       }
@@ -278,20 +278,20 @@ describe('change events', function () {
   var model, Model;
 
   before(function () {
-    Model = app.define('Model', {
+    Model = sledom.define('Model', {
       idField: 'id',
       fields: {
         name: {
-          type: app.STRING,
+          type: sledom.STRING,
           default: 'John Doe'
         },
 
         number: {
-          type: app.NUMBER
+          type: sledom.NUMBER
         },
 
         isDead: {
-          type: app.BOOLEAN,
+          type: sledom.BOOLEAN,
           default: false
         }
       }
@@ -303,7 +303,7 @@ describe('change events', function () {
   });
 
   it('should execute a handler when a field changes', function (done) {
-    model.on(app.CHANGE, function () {
+    model.on(sledom.CHANGE, function () {
       done();
     });
 
@@ -311,7 +311,7 @@ describe('change events', function () {
   });
 
   it('should pass the new values', function (done) {
-    model.on(app.CHANGE, function (changes) {
+    model.on(sledom.CHANGE, function (changes) {
       will(changes).beLike({ number: 99 });
       done();
     });
@@ -320,7 +320,7 @@ describe('change events', function () {
   });
 
   it('should not fire when the field did not change', function (done) {
-    model.on(app.CHANGE, function (changes) {
+    model.on(sledom.CHANGE, function (changes) {
       will(changes).not.be('name');
       done();
     });
@@ -334,10 +334,10 @@ describe('enum fields', function () {
   var Model;
 
   before(function () {
-    Model = app.define('Model', {
+    Model = sledom.define('Model', {
       fields: {
         color: {
-          type: app.ENUM,
+          type: sledom.ENUM,
           default: 'red',
           values: ['red', 'white', 'blue']
         }
@@ -358,11 +358,11 @@ describe('dirty state', function () {
   var model;
 
   beforeEach(function () {
-    var Model = app.define('Model', {
+    var Model = sledom.define('Model', {
       fields: {
-        foo: { type: app.STRING },
-        bar: { type: app.NUMBER },
-        baz: { type: app.NUMBER },
+        foo: { type: sledom.STRING },
+        bar: { type: sledom.NUMBER },
+        baz: { type: sledom.NUMBER },
       }
     });
     model = new Model({
@@ -391,9 +391,9 @@ describe('instance methods', function () {
   var Model;
 
   before(function () {
-    Model = app.define('Model', {
+    Model = sledom.define('Model', {
       fields: {
-        number: { type: app.NUMBER }
+        number: { type: sledom.NUMBER }
       },
 
       // instance method
@@ -406,5 +406,24 @@ describe('instance methods', function () {
   it('should work from instances', function () {
     var model = new Model({ number: 999 });
     will(model.getNumber()).be('The number is ' + 999);
+  });
+});
+
+describe('custom field types', function () {
+  it('should convert raw values into specified type', function () {
+    function Foo() {}
+    Foo.prototype.proveFooness = function () {
+      return 'I am a Foo.';
+    };
+
+    var Model = sledom.define('Model', {
+      fields: {
+        foo: { type: Foo }
+      }
+    });
+
+    var model = new Model();
+
+    will(model.get('foo').proveFooness()).be('I am a Foo.');
   });
 });
