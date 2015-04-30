@@ -1,5 +1,7 @@
 # Sledom [![Build Status](https://travis-ci.org/reergymerej/sledom.svg?branch=master)](https://travis-ci.org/reergymerej/sledom)
 
+version 0.1.0
+
 This is an unassuming library for creating JavaScript models.
 
 Why should you have to commit to one [MVC](https://developer.chrome.com/apps/app_frameworks#mvc) framework for your app?  Haven't we all learned that being modular is better?  [React](https://facebook.github.io/react/) has broken out the *V*.  This is the *M*.

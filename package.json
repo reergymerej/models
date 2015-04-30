@@ -1,7 +1,7 @@
 {
   "name": "models",
-  "version": "1.0.0",
-  "description": "the M of MVC",
+  "version": "0.1.0",
+  "description": "an unassuming library for creating JavaScript models",
   "main": "app.js",
   "directories": {
     "test": "test"
@@ -12,8 +12,9 @@
   "keywords": [
     "mvc",
     "model",
-    "model",
-    "library"
+    "models",
+    "model library",
+    "mvc framework"
   ],
   "author": "Jeremy Greer <jeremy.greer.atl@gmail.com> (http://jeremygreer.herokuapp.com/)",
   "license": "ISC",
