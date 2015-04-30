@@ -226,6 +226,29 @@ var model = new Model();
 model.get('foo').proveFooness(); // 'I am a Foo.'
 ```
 
+## Nested Models
+
+```js
+var Person = sledom.define('Person', {
+  fields: {
+    name: { type: sledom.STRING },
+    gender: { type: sledom.ENUM, values: ['male', 'female' ] }
+  }
+});
+
+var Child = sledom.define('Child', {
+  fields: {
+    name: { type: sledom.STRING },
+    parent: { type: Person }
+  }
+});
+
+var dad = new Person({ name: 'Dad', gender: 'male' });
+var daughter = new Child({ name: 'Daughter', parent: dad });
+
+daughter.get('parent') instanceof Person; // true
+```
+
 ================================================
 
 Please [create an issue](https://github.com/reergymerej/sledom/issues) for feature requests or to report bugs.
@@ -234,4 +257,4 @@ Please [create an issue](https://github.com/reergymerej/sledom/issues) for featu
 
 * save routines
 * shorthand definitions
-* nested models
+* model inheritence

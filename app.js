@@ -6,7 +6,8 @@ var BOOLEAN = 'boolean',
   ENUM = 'enum',
   CHANGE = 'change',
   CUSTOM = 'custom',
-  GENERIC = 'generic';
+  GENERIC = 'generic',
+  MODEL = 'model';
 
 var Model = function () {};
 
@@ -194,9 +195,7 @@ Model.prototype.dirty = function () {
 // ================================================
 var Field = function (name, config, model) {
   this.name = name;
-
   this.setType(config);
-
   this.default = config.default;
   this.valueFn = config.value;
   this.model = model;
@@ -208,8 +207,13 @@ Field.prototype.setType = function (config) {
   if (!config.type) {
     this.type = GENERIC;
   } else if (typeof config.type === 'function') {
+    if (config.type.prototype.sledom) {
+      this.type = MODEL;
+    } else {
+      this.type = CUSTOM;
+    }
+
     this.FieldConstructor = config.type;
-    this.type = CUSTOM;
   } else {
     this.type = config.type;
   }
@@ -288,6 +292,7 @@ var extend = function (Parent) {
 var createModelConstructor = function (name, config) {
   var Constructor = extend(Model);
 
+  Constructor.prototype.sledom = true;
   Constructor.prototype.type = name;
   Constructor.prototype.config = config;
 

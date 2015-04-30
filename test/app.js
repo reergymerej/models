@@ -427,3 +427,31 @@ describe('custom field types', function () {
     will(model.get('foo').proveFooness()).be('I am a Foo.');
   });
 });
+
+describe('nested models', function () {
+  it('should support nested models', function () {
+    var Person = sledom.define('Person', {
+      fields: {
+        name: { type: sledom.STRING },
+        gender: { type: sledom.ENUM, values: ['male', 'female' ] }
+      }
+    });
+
+    var Child = sledom.define('Child', {
+      fields: {
+        name: { type: sledom.STRING },
+        parent: { type: Person }
+      }
+    });
+
+    var dad = new Person({ name: 'Dad', gender: 'male' });
+    var daughter = new Child({ name: 'Daughter', parent: dad });
+
+    will(daughter.get('parent')).beA(Person);
+  });
+
+  // TODO:
+  // it('should handle changes on inner models', function () {
+
+  // });
+});
