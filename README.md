@@ -232,7 +232,6 @@ Please [create an issue](https://github.com/reergymerej/sledom/issues) for featu
 
 ### Coming Soon
 
-* custom field types
 * save routines
 * shorthand definitions
 * nested models
