@@ -1,18 +1,72 @@
-# Model [![Build Status](https://travis-ci.org/reergymerej/models.svg?branch=master)](https://travis-ci.org/reergymerej/models)
+# Sledom [![Build Status](https://travis-ci.org/reergymerej/sledom.svg?branch=master)](https://travis-ci.org/reergymerej/sledom)
 
-This is an unassuming library for creating JavaScript models.  It's the M of MVC.
+This is an unassuming library for creating JavaScript models.
+
+Why should you have to commit to one [MVC](https://developer.chrome.com/apps/app_frameworks#mvc) framework for your app?  Haven't we all learned that being modular is better?  [React](https://facebook.github.io/react/) has broken out the *V*.  This is the *M*.
+
+## Features
+* field normalization
+* field types, automatic conversion
+* enum fields
+* default field values
+* computed fields
+* validation
+* dirty state
+* event binding
+
+## Quick Start
+
+### Define a Model
+```js
+var sledom = require('sledom');
+var Person = sledom.define('Person', {
+  fields: {
+    name: { type: sledom.STRING },
+    eyeColor: { type: sledom.STRING },
+    age: { type: sledom.NUMBER }
+  }
+});
+```
+
+### Create an Instance
+```js
+var dude = new Person({
+  name: 'Lebowski',
+  eyeColor: 'blue',
+  age: 42
+});
+```
+
+### Use the Instance
+```js
+// Listen for changes.
+dude.on(sledom.CHANGE, function (changes) {
+  console.log(changes);
+});
+
+// Set values.
+dude.set({ age: 43 });  // logs { age: 43 }
+
+// Get values.
+dude.get();  // { name: 'Lebowski', eyeColor: 'blue', age: 43 }
+```
+
+Now that's just the beginning.  Keep scrolling for more.
+
+Sledom is in active development, so your feedback and questions are appreciated.  
+https://github.com/reergymerej/sledom/issues
 
 ## Definition
 
 ```js
-var model = require('model');
+var sledom = require('sledom');
 
-var Foo = model.define('Foo', {
+var Foo = sledom.define('Foo', {
   idField: 'name',
   fields: {
-    name: { type: model.STRING },
-    bar: { type: model.NUMBER, default: 42 },
-    baz: { type: model.BOOLEAN, default: true }
+    name: { type: sledom.STRING },
+    bar: { type: sledom.NUMBER, default: 42 },
+    baz: { type: sledom.BOOLEAN, default: true }
   }
 });
 
@@ -153,8 +207,11 @@ foo.getNumber(); // 'The number is 999'
 
 ================================================
 
+Please [create an issue](https://github.com/reergymerej/sledom/issues) for feature requests or to report bugs.
+
 ### Coming Soon
 
+* custom field types
 * save routines
-* shorthand definition
+* shorthand definitions
 * nested models
