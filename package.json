@@ -25,12 +25,7 @@
     "mocha": "^2.2.4",
     "willy": "^1.0.1"
   },
-  "dependencies": {
-    "grunt": "^0.4.5",
-    "grunt-contrib-watch": "^0.6.1",
-    "grunt-mocha-test": "^0.12.7",
-    "willy": "^1.0.1"
-  },
+  "dependencies": {},
   "repository": {
     "type": "git",
     "url": "git+https://github.com/reergymerej/sledom.git"
