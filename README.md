@@ -106,16 +106,16 @@ foo.get(); // { name: 'dude', bar: 3.14, baz: false }
 Computed field values are created dynamically based on the model's other fields.
 
 ```js
-var Foo = models.define('Foo', {
+var Foo = sledom.define('Foo', {
   fields: {
     firstName: {
-      type: models.STRING
+      type: sledom.STRING
     },
     lastName: {
-      type: models.STRING
+      type: sledom.STRING
     },
     fullName: {
-      type: models.STRING,
+      type: sledom.STRING,
       value: function (fieldValues) {
         return fieldValues.firstName + ' ' + fieldValues.lastName;
       }
@@ -131,10 +131,10 @@ foo.get('fullName'); // 'Jeremy Greer'
 ### ENUM Fields
 
 ```js
-var Foo = models.define('Foo', {
+var Foo = sledom.define('Foo', {
   fields: {
     color: {
-      type: models.ENUM,
+      type: sledom.ENUM,
       default: 'red',
       values: ['red', 'white', 'blue']
     }
@@ -150,10 +150,10 @@ foo.set('color', 'purple');  // throws error
 ### Validation
 
 ```js
-var Foo = models.define('Foo', {
+var Foo = sledom.define('Foo', {
   fields: {
     num: {
-      type: models.NUMBER,
+      type: sledom.NUMBER,
       valid: function (fieldValue) {
         return fieldValue > 3;
       }
@@ -170,13 +170,26 @@ foo.valid(); // true
 
 ### Observing Changes
 
+You can register event listeners using `on` or `bind`.  Pass the event name (only sledom.CHANGE supported for now) and the function you want to be executed when the event is triggered.
+
 ```js
-foo.on(models.CHANGE, function (values) {
+var onChange = function (values) {
   console.log(values);  // { name: 'new name', number: 8675309 }
-});
+};
+
+foo.on(sledom.CHANGE, onChange);
 
 foo.set({ name: 'new name', number: 8675309 });
 foo.set({ name: 'new name' });  // won't fire handler because nothing changed
+```
+
+To unregister event listeners, use `off` or `unbind`.  If you want to remove all listeners, no second parameter is required.  If you want to remove a specific event handler, pass it as the 2nd parameter.
+
+```js
+foo.unbind(sledom.CHANGE, onChange);
+
+// remove all sledom.CHANGE listeners
+foo.unbind(sledom.CHANGE);
 ```
 
 ### Check Dirty State
@@ -261,8 +274,8 @@ Please [create an issue](https://github.com/reergymerej/sledom/issues) for featu
 
 ### Coming Soon
 
-* unbind event listeners
 * preventable set events
+* more events
 * custom model validation (not just fields)
 * save routines
 * shorthand definitions

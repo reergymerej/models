@@ -328,6 +328,58 @@ describe('change events', function () {
     model.set('name', model.get('name'));
     done();
   });
+
+  it('should allow unbinding of events', function () {
+    var handlerCalled = false;
+    var onChange = function () {
+      handlerCalled = true;
+    };
+    model.on(sledom.CHANGE, onChange);
+    model.off(sledom.CHANGE, onChange);
+    model.set('name', 'new name');
+
+    will(handlerCalled).be(false);
+  });
+
+  it('should only unbind when event type and handler match', function () {
+    var handlerCalled = false;
+    var onChange = function () {};
+    var onChange2 = function () {
+      handlerCalled = true;
+    };
+
+    model.on(sledom.CHANGE, onChange);
+    model.on(sledom.CHANGE, onChange2);
+    model.off(sledom.CHANGE, onChange);
+    model.set('name', 'new name');
+
+    will(handlerCalled).be(true);
+  });
+
+  it('should unbind all handlers when not specified', function () {
+    var handlerCalled = false;
+    var onChange = function () {
+      handlerCalled = true;
+    };
+    var onChange2 = function () {
+      handlerCalled = true;
+    };
+
+    model.on(sledom.CHANGE, onChange);
+    model.on(sledom.CHANGE, onChange2);
+    model.off(sledom.CHANGE);
+    model.set('name', 'new name');
+
+    will(handlerCalled).be(false);
+  });
+
+  it('should have aliases for the bind method', function () {
+    will(model.on).be(model.bind);
+  });
+
+  it('should have aliases for the unbind method', function () {
+    will(model.off).be(model.unbind);
+  });
 });
 
 describe('enum fields', function () {

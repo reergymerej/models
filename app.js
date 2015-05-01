@@ -16,6 +16,7 @@ Model.prototype._init = function (instanceConfig) {
   this._fields = this._createFields(classConfig.fields, instanceConfig);
   this._setInitialValues(instanceConfig);
   this._setIdField(classConfig.idField);
+  this._handlers = {};
 };
 
 // gets/sets id field value
@@ -85,11 +86,26 @@ Model.prototype._getField = function (fieldName) {
 
 // ================================================
 // Model public
-Model.prototype.on = function (eventName, handler) {
-  // TODO: get handlers method
-  this._handlers = this._handlers || {};
-  this._handlers[eventName] = this._handlers[eventName] || [];
+Model.prototype.on = Model.prototype.bind = function (eventName, handler) {
+  var handlers = this._getHandlers(eventName);
   this._handlers[eventName].push(handler);
+};
+
+Model.prototype.off = Model.prototype.unbind = function (eventName, handler) {
+  var i, handlers = this._getHandlers(eventName), fn;
+
+  for (i = 0; i < handlers.length; i++) {
+    fn = handlers[i];
+
+    if (handler ? fn === handler : true) {
+      handlers.splice(i, 1);
+      i--;
+    }
+  }
+};
+
+Model.prototype._getHandlers = function (eventName) {
+  return (this._handlers[eventName] = this._handlers[eventName] || []);
 };
 
 // get a field value
