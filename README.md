@@ -1,7 +1,5 @@
 # Sledom
-[![Build Status](https://travis-ci.org/reergymerej/sledom.svg?branch=master)](https://travis-ci.org/reergymerej/sledom) v 0.1.0
-
-This is an unassuming library for creating JavaScript models.
+[![Build Status](https://travis-ci.org/reergymerej/sledom.svg?branch=v0.1.1)](https://travis-ci.org/reergymerej/sledom) v 0.1.1
 
 Why should you have to commit to one [MVC](https://developer.chrome.com/apps/app_frameworks#mvc) framework for your app?  Haven't we all learned that being modular is better?  [React](https://facebook.github.io/react/) has broken out the *V*.  This is the *M*.
 
@@ -54,7 +52,7 @@ dude.get();  // { name: 'Lebowski', eyeColor: 'blue', age: 43 }
 
 Now that's just the beginning.  Keep scrolling for more.
 
-Sledom is in active development, so your feedback and questions are appreciated.  
+Sledom is in active development, so your feedback and questions are appreciated.
 https://github.com/reergymerej/sledom/issues
 
 ## Definition
@@ -206,13 +204,57 @@ var foo = new Foo({ number: 999 });
 foo.getNumber(); // 'The number is 999'
 ```
 
+## Custom Field Types
+
+```js
+function Foo() {}
+Foo.prototype.proveFooness = function () {
+  return 'I am a Foo.';
+};
+
+var Model = sledom.define('Model', {
+  fields: {
+    foo: {
+      // custom field type
+      type: Foo
+    }
+  }
+});
+
+var model = new Model();
+
+model.get('foo').proveFooness(); // 'I am a Foo.'
+```
+
+## Nested Models
+
+```js
+var Person = sledom.define('Person', {
+  fields: {
+    name: { type: sledom.STRING },
+    gender: { type: sledom.ENUM, values: ['male', 'female' ] }
+  }
+});
+
+var Child = sledom.define('Child', {
+  fields: {
+    name: { type: sledom.STRING },
+    parent: { type: Person }
+  }
+});
+
+var dad = new Person({ name: 'Dad', gender: 'male' });
+var daughter = new Child({ name: 'Daughter', parent: dad });
+
+daughter.get('parent') instanceof Person; // true
+```
+
 ================================================
 
 Please [create an issue](https://github.com/reergymerej/sledom/issues) for feature requests or to report bugs.
 
 ### Coming Soon
 
-* custom field types
 * save routines
 * shorthand definitions
-* nested models
+* model inheritence

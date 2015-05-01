@@ -4,7 +4,10 @@ var BOOLEAN = 'boolean',
   NUMBER = 'number',
   STRING = 'string',
   ENUM = 'enum',
-  CHANGE = 'change';
+  CHANGE = 'change',
+  CUSTOM = 'custom',
+  GENERIC = 'generic',
+  MODEL = 'model';
 
 var Model = function () {};
 
@@ -192,12 +195,28 @@ Model.prototype.dirty = function () {
 // ================================================
 var Field = function (name, config, model) {
   this.name = name;
-  this.type = config.type;
+  this.setType(config);
   this.default = config.default;
   this.valueFn = config.value;
   this.model = model;
   this.valid = config.valid;
   this.values = config.values;
+};
+
+Field.prototype.setType = function (config) {
+  if (!config.type) {
+    this.type = GENERIC;
+  } else if (typeof config.type === 'function') {
+    if (config.type.prototype.sledom) {
+      this.type = MODEL;
+    } else {
+      this.type = CUSTOM;
+    }
+
+    this.FieldConstructor = config.type;
+  } else {
+    this.type = config.type;
+  }
 };
 
 Field.prototype.get = function () {
@@ -234,6 +253,7 @@ Field.prototype.set = function (rawValue) {
 
 Field.prototype.convertValue = function (rawValue) {
   var value;
+
   switch (this.type) {
     case BOOLEAN:
       value = !!rawValue;
@@ -246,6 +266,9 @@ Field.prototype.convertValue = function (rawValue) {
       if (isNaN(value)) {
         value = 0;
       }
+      break;
+    case CUSTOM:
+      value = new this.FieldConstructor(rawValue);
       break;
     default:
       value = rawValue;
@@ -269,6 +292,7 @@ var extend = function (Parent) {
 var createModelConstructor = function (name, config) {
   var Constructor = extend(Model);
 
+  Constructor.prototype.sledom = true;
   Constructor.prototype.type = name;
   Constructor.prototype.config = config;
 

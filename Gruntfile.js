@@ -1,23 +1,27 @@
 module.exports = function(grunt) {
-
-  // Project configuration.
+ 
+  grunt.loadNpmTasks('grunt-mocha-test');
+  grunt.loadNpmTasks('grunt-contrib-watch');
+ 
   grunt.initConfig({
-    pkg: grunt.file.readJSON('package.json'),
-    uglify: {
-      options: {
-        banner: '/*! <%= pkg.name %> <%= grunt.template.today("yyyy-mm-dd") %> */\n'
-      },
-      build: {
-        src: 'src/<%= pkg.name %>.js',
-        dest: 'build/<%= pkg.name %>.min.js'
+
+    mochaTest: {
+      test: {
+        options: {
+          reporter: 'spec'
+        },
+        src: ['test/**/*.js']
+      }
+    },
+
+    watch: {
+      scripts: {
+        files: ['**/*.js'],
+        tasks: ['test']
       }
     }
   });
-
-  // Load the plugin that provides the "uglify" task.
-  grunt.loadNpmTasks('grunt-contrib-uglify');
-
-  // Default task(s).
-  grunt.registerTask('default', ['uglify']);
-
+ 
+  grunt.registerTask('test', ['mochaTest']);
+  grunt.registerTask('default', 'watch');
 };
