@@ -1,5 +1,5 @@
-# Sledom
-[![Build Status](https://travis-ci.org/reergymerej/sledom.svg?branch=v0.1.1)](https://travis-ci.org/reergymerej/sledom) v 0.1.1
+# Sledom v0.1.2 [![Build Status](https://travis-ci.org/reergymerej/sledom.svg?branch=v0.1.1)](https://travis-ci.org/reergymerej/sledom)
+
 
 Why should you have to commit to one [MVC](https://developer.chrome.com/apps/app_frameworks#mvc) framework for your app?  Haven't we all learned that being modular is better?  [React](https://facebook.github.io/react/) has broken out the *V*.  This is the *M*.
 
@@ -53,9 +53,13 @@ dude.get();  // { name: 'Lebowski', eyeColor: 'blue', age: 43 }
 Now that's just the beginning.  Keep scrolling for more.
 
 Sledom is in active development, so your feedback and questions are appreciated.
-https://github.com/reergymerej/sledom/issues
+<https://github.com/reergymerej/sledom/issues>
 
-## Definition
+===============================================================================
+
+## API
+
+### Model Definition
 
 ```js
 var sledom = require('sledom');
@@ -72,7 +76,7 @@ var Foo = sledom.define('Foo', {
 var foo = new Foo({ name: 'asdf', bar: 99 });
 ```
 
-## Getting Field Values
+### Getting Field Values
 
 ```js
 foo.get(); // { name: 'asdf', bar: 99, baz: true }
@@ -80,7 +84,7 @@ foo.get('bar'); // 99
 foo.id(); // 'asdf'
 ```
 
-## Setting Field Values
+### Setting Field Values
 
 ```js
 foo.id('new id');
@@ -98,6 +102,8 @@ foo.get(); // { name: 'dude', bar: 3.14, baz: false }
 ```
 
 ### Computed Fields
+
+Computed field values are created dynamically based on the model's other fields.
 
 ```js
 var Foo = models.define('Foo', {
@@ -141,7 +147,7 @@ foo.get('color');  // 'red'
 foo.set('color', 'purple');  // throws error
 ```
 
-## Validation
+### Validation
 
 ```js
 var Foo = models.define('Foo', {
@@ -162,7 +168,7 @@ foo = new Foo({ num: 4 });
 foo.valid(); // true
 ```
 
-## Observing Changes
+### Observing Changes
 
 ```js
 foo.on(models.CHANGE, function (values) {
@@ -173,7 +179,7 @@ foo.set({ name: 'new name', number: 8675309 });
 foo.set({ name: 'new name' });  // won't fire handler because nothing changed
 ```
 
-## Check Dirty State
+### Check Dirty State
 
 ```js
 foo = new Foo({ name: 'a foo', bar: 66 });
@@ -186,7 +192,7 @@ foo.set({ bar: 77 });
 foo.dirty(); // { name: 'new name', bar: 77 }
 ```
 
-## Instance Methods
+### Instance Methods
 
 ```js
 var Foo = app.define('Model', {
@@ -204,7 +210,7 @@ var foo = new Foo({ number: 999 });
 foo.getNumber(); // 'The number is 999'
 ```
 
-## Custom Field Types
+### Custom Field Types
 
 ```js
 function Foo() {}
@@ -226,7 +232,7 @@ var model = new Model();
 model.get('foo').proveFooness(); // 'I am a Foo.'
 ```
 
-## Nested Models
+### Nested Models
 
 ```js
 var Person = sledom.define('Person', {
@@ -255,6 +261,9 @@ Please [create an issue](https://github.com/reergymerej/sledom/issues) for featu
 
 ### Coming Soon
 
+* unbind event listeners
+* preventable set events
+* custom model validation (not just fields)
 * save routines
 * shorthand definitions
 * model inheritence
