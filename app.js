@@ -2,7 +2,8 @@
 
 var rednib = require('rednib');
 
-var BOOLEAN = 'boolean',
+var VERSION = '0.1.2',
+  BOOLEAN = 'boolean',
   NUMBER = 'number',
   STRING = 'string',
   ENUM = 'enum',
@@ -331,6 +332,7 @@ var define = function (name, modelConfig) {
   return createModelConstructor(name, modelConfig);
 };
 
+exports.VERSION = VERSION;
 exports.define = define;
 exports.BOOLEAN = BOOLEAN;
 exports.STRING = STRING;
