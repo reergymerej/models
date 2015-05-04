@@ -507,3 +507,43 @@ describe('nested models', function () {
 
   // });
 });
+
+describe('set event', function () {
+  var Model, model;
+
+  before(function () {
+    Model = sledom.define('Model', {
+      fields: {
+        foo: {
+          type: sledom.STRING
+        }
+      }
+    });
+  });
+
+  beforeEach(function () {
+    model = new Model();
+  });
+
+  it('should fire when a field is being changed', function () {
+    var fired = false;
+
+    var onSet = function (field, newVal, currentVal) {
+      fired = true;
+    };
+    model.bind(sledom.SET, onSet);
+    model.set('foo', 'new foo');
+    will(fired).be(true);
+  });
+
+  it('should fire pass the field, new value, and current value as args', function (done) {
+    var onSet = function (data) {
+      will(data.field).be('foo');
+      will(data.new).be('new foo');
+      will(data.old).be(undefined);
+      done();
+    };
+    model.bind(sledom.SET, onSet);
+    model.set('foo', 'new foo');
+  });
+});

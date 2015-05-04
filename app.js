@@ -7,19 +7,22 @@ var VERSION = '0.1.2',
   NUMBER = 'number',
   STRING = 'string',
   ENUM = 'enum',
-  CHANGE = 'change',
   CUSTOM = 'custom',
   GENERIC = 'generic',
-  MODEL = 'model';
+  MODEL = 'model',
+  // 
+  CHANGE = 'change',
+  SET = 'set';
 
 var Model = function () {};
 
 rednib.alias('bind', 'on');
 rednib.alias('unbind', 'off');
-rednib(Model.prototype);
 
 Model.prototype._init = function (instanceConfig) {
   var classConfig = this.constructor.prototype.config;
+  rednib(this);
+
   this._fields = this._createFields(classConfig.fields, instanceConfig);
   this._setInitialValues(instanceConfig);
   this._setIdField(classConfig.idField);
@@ -47,7 +50,8 @@ Model.prototype._setIdField = function (name) {
 // @param {Object} fieldValues
 // @return {Field[]}
 Model.prototype._createFields = function (fieldConfigs, fieldValues) {
-  var fields = [];
+  var fields = [],
+    me = this;
 
   fieldConfigs = fieldConfigs || {};
 
@@ -56,6 +60,10 @@ Model.prototype._createFields = function (fieldConfigs, fieldValues) {
     }, this);
 
     return fields;
+};
+
+Model.prototype._onFieldSet = function (field, newVal, currentVal) {
+  this.trigger(SET);
 };
 
 Model.prototype._setInitialValues = function (fieldValues) {
@@ -154,7 +162,10 @@ Model.prototype.set = function (fieldName, value) {
     setValues[fieldName] = value;
   }
 
+
   Object.keys(setValues).forEach(function (fieldName) {
+    this.trigger(SET, fieldName);
+
     var field = this._getField(fieldName),
       value = setValues[fieldName],
       processedValue;
@@ -314,3 +325,4 @@ exports.STRING = STRING;
 exports.NUMBER = NUMBER;
 exports.ENUM = ENUM;
 exports.CHANGE = CHANGE;
+exports.SET = SET;
