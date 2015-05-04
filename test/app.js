@@ -274,7 +274,7 @@ describe('validation', function () {
   });
 });
 
-describe('change events', function () {
+describe.only('change events', function () {
   var model, Model;
 
   before(function () {
