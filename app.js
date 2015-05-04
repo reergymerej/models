@@ -14,12 +14,15 @@ var VERSION = '0.1.2',
 
 var Model = function () {};
 
+rednib.alias('bind', 'on');
+rednib.alias('unbind', 'off');
+rednib(Model.prototype);
+
 Model.prototype._init = function (instanceConfig) {
   var classConfig = this.constructor.prototype.config;
   this._fields = this._createFields(classConfig.fields, instanceConfig);
   this._setInitialValues(instanceConfig);
   this._setIdField(classConfig.idField);
-  this._handlers = {};
 };
 
 // gets/sets id field value
@@ -65,13 +68,6 @@ Model.prototype._setInitialValues = function (fieldValues) {
   }, this);
 };
 
-Model.prototype._fireHandlers = function (eventName, eventData) {
-  var handlers = this._handlers || {};
-  (handlers[eventName] || []).forEach(function (handler) {
-    handler(eventData);
-  });
-};
-
 // @param {String} fieldName
 // @return {Field}
 Model.prototype._getField = function (fieldName) {
@@ -89,27 +85,6 @@ Model.prototype._getField = function (fieldName) {
 
 // ================================================
 // Model public
-Model.prototype.on = Model.prototype.bind = function (eventName, handler) {
-  var handlers = this._getHandlers(eventName);
-  this._handlers[eventName].push(handler);
-};
-
-Model.prototype.off = Model.prototype.unbind = function (eventName, handler) {
-  var i, handlers = this._getHandlers(eventName), fn;
-
-  for (i = 0; i < handlers.length; i++) {
-    fn = handlers[i];
-
-    if (handler ? fn === handler : true) {
-      handlers.splice(i, 1);
-      i--;
-    }
-  }
-};
-
-Model.prototype._getHandlers = function (eventName) {
-  return (this._handlers[eventName] = this._handlers[eventName] || []);
-};
 
 // get a field value
 // @param {String} [fieldName]
@@ -201,7 +176,7 @@ Model.prototype.set = function (fieldName, value) {
   }, this);
 
   if (Object.keys(newValues).length) {
-    this._fireHandlers(CHANGE, newValues);
+    this.trigger(CHANGE, newValues);
   }
 
   return newValues;
