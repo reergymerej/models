@@ -1,5 +1,7 @@
 'use strict';
 
+var rednib = require('rednib');
+
 var BOOLEAN = 'boolean',
   NUMBER = 'number',
   STRING = 'string',

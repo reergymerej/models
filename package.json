@@ -25,7 +25,9 @@
     "mocha": "^2.2.4",
     "willy": "^1.0.1"
   },
-  "dependencies": {},
+  "dependencies": {
+    "rednib": "0.0.2"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/reergymerej/sledom.git"
